@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Products</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Water Products</h1>
+    <form id="orderForm">
+        <div class="product">
+            <img src="https://th.bing.com/th/id/OIP.LtwT4BFR1ZlAAQ7V9h4jrgHaHa?rs=1&pid=ImgDetMain" alt="Water Gallon">
+            <label for="waterGallon">Water Gallon (15000 L.L.):</label>
+            <input type="number" id="waterGallon" name="waterGallon" min="0" value="0">
+        </div>
+
+        <div class="product">
+            <img src="https://th.bing.com/th/id/R.6b620f967489609d8f9cdaaedb0bb537?rik=fiINWZk7E3DP%2bg&pid=ImgRaw&r=0" alt="Water Cooler">
+            <label for="waterCooler">Water Cooler (25000 L.L.):</label>
+            <input type="number" id="waterCooler" name="waterCooler" min="0" value="0">
+        </div>
+
+        <div class="product">
+            <img src="https://th.bing.com/th/id/OIP.qWagGe4w-RBPLPiWer-ZKAHaHa?rs=1&pid=ImgDetMain" alt="Water Bottle">
+            <label for="waterBottle">Water Bottle (8000 L.L.):</label>
+            <input type="number" id="waterBottle" name="waterBottle" min="0" value="0">
+        </div>
+
+        <div class="product">
+            <img src="https://th.bing.com/th/id/OIP.LtwT4BFR1ZlAAQ7V9h4jrgHaHa?rs=1&pid=ImgDetMain" alt="Refill Gallon">
+            <label for="refillGallon">Refill Gallon (12000 L.L.):</label>
+            <input type="number" id="refillGallon" name="refillGallon" min="0" value="0">
+        </div>
+
+        <div class="product">
+            <img src="https://th.bing.com/th/id/R.6b620f967489609d8f9cdaaedb0bb537?rik=fiINWZk7E3DP%2bg&pid=ImgRaw&r=0" alt="Refill Cooler">
+            <label for="refillCooler">Refill Cooler (20000 L.L.):</label>
+            <input type="number" id="refillCooler" name="refillCooler" min="0" value="0">
+        </div>
+
+        <div class="product">
+            <img src="https://th.bing.com/th/id/OIP.qWagGe4w-RBPLPiWer-ZKAHaHa?rs=1&pid=ImgDetMain" alt="Refill Bottle">
+            <label for="refillBottle">Refill Bottle (6000 L.L.):</label>
+            <input type="number" id="refillBottle" name="refillBottle" min="0" value="0">
+        </div>
+
+        <button type="button" onclick="submitOrder()">Submit Order</button>
+    </form>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+}
+
+.product {
+    margin: 10px 0;
+}
+
+.product img {
+    width: 150px;
+    height: 150px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="number"] {
+    width: 50px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+}
+function submitOrder() {
+    const order = {
+        waterGallon: document.getElementById('waterGallon').value,
+        waterCooler: document.getElementById('waterCooler').value,
+        waterBottle: document.getElementById('waterBottle').value,
+        refillGallon: document.getElementById('refillGallon').value,
+        refillCooler: document.getElementById('refillCooler').value,
+        refillBottle: document.getElementById('refillBottle').value
+    };
+
+    localStorage.setItem('currentOrder', JSON.stringify(order));
+    window.location.href = 'checkout.html';
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Order Summary</h1>
+    <div id="orderSummary"></div>
+    <div id="totalPrice"></div>
+    <button onclick="completeOrder()">Complete Order</button>
+
+    <script>
+        function loadOrder() {
+            const order = JSON.parse(localStorage.getItem('currentOrder'));
+            const orderSummary = document.getElementById('orderSummary');
+            const prices = {
+                waterGallon: 15000,
+                waterCooler: 25000,
+                waterBottle: 8000,
+                refillGallon: 12000,
+                refillCooler: 20000,
+                refillBottle: 6000
+            };
+            let totalPrice = 0;
+
+            for (const item in order) {
+                if (order[item] > 0) {
+                    const div = document.createElement('div');
+                    div.textContent = `${item.replace(/([A-Z])/g, ' $1')}: ${order[item]}`;
+                    orderSummary.appendChild(div);
+                    totalPrice += order[item] * prices[item];
+                }
+            }
+
+            const totalDiv = document.createElement('div');
+            totalDiv.textContent = `Total Price: ${totalPrice} L.L.`;
+            document.getElementById('totalPrice').appendChild(totalDiv);
+        }
+
+        function completeOrder() {
+            const order = JSON.parse(localStorage.getItem('currentOrder'));
+            let completedOrders = JSON.parse(localStorage.getItem('completedOrders')) || [];
+            completedOrders.push(order);
+            localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+            alert('Order Completed');
+            window.location.href = 'index.html';
+        }
+
+        window.onload = loadOrder;
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Orders</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Completed Orders</h1>
+    <div id="ordersList"></div>
+
+    <script>
+        function loadCompletedOrders() {
+            const completedOrders = JSON.parse(localStorage.getItem('completedOrders')) || [];
+            const ordersList = document.getElementById('ordersList');
+            completedOrders.forEach((order, index) => {
+                const div = document.createElement('div');
+                div.innerHTML = `<h3>Order ${index + 1}</h3>`;
+                let totalPrice = 0;
+                const prices = {
+                    waterGallon: 15000,
+                    waterCooler: 25000,
+                    waterBottle: 8000,
+                    refillGallon: 12000,
+                    refillCooler: 20000,
+                    refillBottle: 6000
+                };
+
+                for (const item in order) {
+                    if (order[item] > 0) {
+                        div.innerHTML += `${item.replace(/([A-Z])/g, ' $1')}: ${order[item]}<br>`;
+                        totalPrice += order[item] * prices[item];
+                    }
+                }
+                div.innerHTML += `<strong>Total Price: ${totalPrice} L.L.</strong><br>`;
+                ordersList.appendChild(div);
+            });
+        }
+
+        window.onload = loadCompletedOrders;
+    </script>
+</body>
+</html>
